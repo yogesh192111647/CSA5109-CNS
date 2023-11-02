@@ -1,0 +1,81 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+
+// Function to calculate the modular multiplicative inverse of a number
+int modInverse(int a, int m) {
+    a = a % m;
+    int x;
+    for (x = 1; x < m; x++) {
+        if ((a * x) % m == 1) {
+            return x;
+        }
+    }
+    return -1; // No modular inverse exists
+}
+
+// Function to decrypt a character using the Affine Caesar cipher
+char decrypt(char ch, int a, int b) {
+    if (isalpha(ch)) {
+        char base = islower(ch) ? 'a' : 'A';
+        int aInverse = modInverse(a, 26);
+        if (aInverse == -1) {
+            return ch;
+        }
+        return ((aInverse * (ch - base - b + 26) % 26) + base);
+    }
+    return ch;
+}
+
+int main() {
+    char ciphertext[100];
+    printf("Enter the ciphertext: ");
+    scanf(" %[^\n]s", ciphertext);
+
+    int maxFrequencyB = 0;
+    int maxFrequencyU = 0;
+    int bestA = 0;
+    int bestB = 0;
+    int a;
+    int b;
+    for (a = 1; a < 26; a++) {
+        for (b = 0; b < 26; b++) {
+            char plaintext[100]; // Fixed-length array
+            int frequencyB = 0;
+            int frequencyU = 0;
+            int i;
+
+            for (i = 0; ciphertext[i] != '\0'; i++) {
+                plaintext[i] = decrypt(ciphertext[i], a, b);
+
+                if (plaintext[i] == 'B') {
+                    frequencyB++;
+                } else if (plaintext[i] == 'U') {
+                    frequencyU++;
+                }
+            }
+
+            plaintext[i] = '\0'; // Null-terminate the plaintext
+
+            if (frequencyB > maxFrequencyB && frequencyU > maxFrequencyU) {
+                maxFrequencyB = frequencyB;
+                maxFrequencyU = frequencyU;
+                bestA = a;
+                bestB = b;
+            }
+        }
+    }
+
+    char decryptedText[100]; // Fixed-length array
+    int i;
+    for (i = 0; ciphertext[i] != '\0'; i++) {
+        decryptedText[i] = decrypt(ciphertext[i], bestA, bestB);
+    }
+    decryptedText[i] = '\0'; // Null-terminate the decrypted text
+
+    printf("Decrypted text with best 'a' and 'b' values (most reasonable result):\n");
+    printf("a = %d, b = %d\n", bestA, bestB);
+    printf("%s\n", decryptedText);
+
+    return 0;
+}

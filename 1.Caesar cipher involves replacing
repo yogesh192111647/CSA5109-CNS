@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <string.h>
+void caesarCipherEncrypt(char message[], int key) {
+    int i;
+    for (i = 0; message[i] != '\0'; i++) {
+        if (message[i] >= 'a' && message[i] <= 'z') {
+            message[i] = (message[i] + key - 'a') % 26 + 'a';
+        } else if (message[i] >= 'A' && message[i] <= 'Z') {
+            message[i] = (message[i] + key - 'A') % 26 + 'A';
+        }
+    }
+}
+void caesarCipherDecrypt(char message[], int key) {
+    int i;
+    for (i = 0; message[i] != '\0'; i++) {
+        if (message[i] >= 'a' && message[i] <= 'z') {
+            message[i] = (message[i] - key - 'a' + 26) % 26 + 'a';
+        } else if (message[i] >= 'A' && message[i] <= 'Z') {
+            message[i] = (message[i] - key - 'A' + 26) % 26 + 'A';
+        }
+    }
+}
+
+int main() {
+    char message[100];
+    int key;
+
+    printf("Enter a message: ");
+    gets(message);
+
+    printf("Enter the encryption key (1-25): ");
+    scanf("%d", &key);
+
+    if (key < 1 || key > 25) {
+        printf("Invalid key. Key must be in the range 1-25.\n");
+        return 1;
+    }
+
+    caesarCipherEncrypt(message, key);
+    printf("Encrypted message: %s\n", message);
+    caesarCipherDecrypt(message, key);
+    printf("Decrypted message: %s\n", message);
+
+    return 0;
+}

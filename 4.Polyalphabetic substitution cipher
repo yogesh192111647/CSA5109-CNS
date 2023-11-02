@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+
+void polyalphabeticEncrypt(char message[], char key[]) {
+    int msgLen = strlen(message);
+    int keyLen = strlen(key);
+    char ciphertext[msgLen + 1];
+    int i;
+
+    for (i = 0; i < msgLen; i++) {
+        if (isalpha(message[i])) {
+            char shift = key[i % keyLen] - 'A';
+
+            if (islower(message[i])) {
+                ciphertext[i] = 'a' + (message[i] - 'a' + shift) % 26;
+            } else {
+                ciphertext[i] = 'A' + (message[i] - 'A' + shift) % 26;
+            }
+        } else {
+            ciphertext[i] = message[i]; 
+        }
+    }
+
+    ciphertext[msgLen] = '\0';
+    strcpy(message, ciphertext);
+}
+
+int main() {
+    char message[100];
+    char key[100];
+
+    printf("Enter a message: ");
+    gets(message);
+
+    printf("Enter a key: ");
+    gets(key);
+    polyalphabeticEncrypt(message, key);
+
+    printf("Encrypted message: %s\n", message);
+
+    return 0;
+}

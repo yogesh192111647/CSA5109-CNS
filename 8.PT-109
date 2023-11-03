@@ -1,0 +1,72 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+void findCharPosition(char matrix[5][5], char ch, int *row, int *col) {
+    if (ch == 'J') ch = 'I';
+    int i;
+    int j;
+    for (i = 0; i < 5; i++) {
+        for (j = 0; j < 5; j++) {
+            if (matrix[i][j] == ch) {
+                *row = i;
+                *col = j;
+                return;
+            }
+        }
+    }
+}
+
+void decryptPlayfair(char message[], char matrix[5][5]) {
+    int len = strlen(message);
+    int i = 0;
+    char plaintext[len];
+
+    while (i < len) {
+        if (!isalpha(message[i])) {
+            plaintext[i] = message[i];
+            i++;
+            continue;
+        }
+
+        char first = message[i++];
+        char second = message[i++];
+
+        if (first == 'J') first = 'I';
+        if (second == 'J') second = 'I';
+
+        int row1, col1, row2, col2;
+        findCharPosition(matrix, first, &row1, &col1);
+        findCharPosition(matrix, second, &row2, &col2);
+
+        if (row1 == row2) {
+            plaintext[i - 2] = matrix[row1][(col1 - 1 + 5) % 5];
+            plaintext[i - 1] = matrix[row2][(col2 - 1 + 5) % 5];
+        } else if (col1 == col2) {
+            plaintext[i - 2] = matrix[(row1 - 1 + 5) % 5][col1];
+            plaintext[i - 1] = matrix[(row2 - 1 + 5) % 5][col2];
+        } else {
+            plaintext[i - 2] = matrix[row1][col2];
+            plaintext[i - 1] = matrix[row2][col1];
+        }
+    }
+
+    plaintext[len] = '\0';
+    strcpy(message, plaintext);
+}
+
+int main() {
+    char message[] = "KXJEY UREBE ZWEHE WRYTU HEYFS KREHE GOYFI WTTTU OLKSY CAJPO BOTEI ZONTX BYBNT GONEY CUZWR GDSON SXBOU YWRHE BAAHY USEDQ";
+    char matrix[5][5] = {
+        {'K', 'X', 'J', 'E', 'Y'},
+        {'U', 'R', 'E', 'B', 'Z'},
+        {'W', 'H', 'F', 'S', 'T'},
+        {'G', 'O', 'Y', 'I', 'L'},
+        {'C', 'A', 'P', 'D', 'Q'}
+    };
+
+    decryptPlayfair(message, matrix);
+    printf("Decrypted message: %s\n", message);
+
+    return 0;
+}

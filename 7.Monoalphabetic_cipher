@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+void generateMonoalphabeticKey(char keyword[], char key[]) {
+    int keywordLength = strlen(keyword);
+    int keyIndex = 0;
+    strcpy(key, keyword);
+    keyIndex = keywordLength;
+    char letter;
+    int i;
+    for (letter = 'A'; letter <= 'Z'; letter++) {
+        int found = 0;
+        for (i = 0; i < keywordLength; i++) {
+            if (toupper(keyword[i]) == letter) {
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            key[keyIndex++] = letter;
+        }
+    }
+    key[keyIndex] = '\0';
+}
+void monoalphabeticEncrypt(char message[], char key[]) {
+    int messageLength = strlen(message);
+    int i;
+    for (i = 0; i < messageLength; i++) {
+        if (isalpha(message[i])) {
+            char base = islower(message[i]) ? 'a' : 'A';
+            int index = toupper(message[i]) - 'A';
+            message[i] = islower(message[i]) ? tolower(key[index]) : key[index];
+        }
+    }
+}
+
+int main() {
+    char keyword[] = "CIPHER";
+    char plaintext[100];
+    char cipherKey[27];
+    char ciphertext[100];
+    generateMonoalphabeticKey(keyword, cipherKey);
+    printf("Enter the plaintext: ");
+    scanf(" %[^\n]s", plaintext);
+    monoalphabeticEncrypt(plaintext, cipherKey);
+    printf("Cipher key: %s\n", cipherKey);
+    printf("Encrypted message: %s\n", plaintext);
+
+    return 0;
+}
